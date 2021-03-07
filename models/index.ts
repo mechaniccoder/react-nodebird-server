@@ -11,7 +11,7 @@ const env: Env = (process.env.NODE_ENV as Env) || "development";
 
 const config = configOptions[env];
 
-const sequelize = new Sequelize(
+export const sequelize = new Sequelize(
   config.database,
   config.username,
   config.password,
@@ -59,4 +59,4 @@ Hashtag.belongsToMany(Post, {through: "PostHashtag"});
 
 Image.belongsTo(Post);
 
-export default sequelize;
+export default sequelize.models;

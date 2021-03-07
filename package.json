@@ -11,6 +11,8 @@
   "author": "mechaniccoder",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/node": "^14.14.31",
     "@types/nodemon": "^1.19.0",
@@ -20,6 +22,8 @@
   },
   "dependencies": {
     "@types/validator": "^13.1.3",
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mysql2": "^2.2.5",

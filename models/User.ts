@@ -1,13 +1,13 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
 import Post from "./Post";
 
-export default (sequelize: Sequelize) => {
-  class User extends Model {
-    nickname!: string;
-    email!: string;
-    password!: string;
-  }
+export class User extends Model {
+  nickname!: string;
+  email!: string;
+  password!: string;
+}
 
+export default (sequelize: Sequelize) => {
   User.init(
     {
       email: {
@@ -21,7 +21,7 @@ export default (sequelize: Sequelize) => {
         unique: true,
       },
       password: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(1000),
         allowNull: false,
       },
     },
