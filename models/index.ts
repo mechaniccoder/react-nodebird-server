@@ -27,7 +27,7 @@ createComment(sequelize);
 createImage(sequelize);
 createHashtag(sequelize);
 
-const {User, Post, Comment, Hashtag, Image} = sequelize.models;
+export const {User, Post, Comment, Hashtag, Image} = sequelize.models;
 
 // models accociation
 

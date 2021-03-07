@@ -1,6 +1,7 @@
 import express, {NextFunction, Request, Response} from "express";
 import bcrypt from "bcrypt";
 import db from "../models";
+import {User} from "../models/User";
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.post(
       const hashedPassword = await bcrypt.hash(password, 10);
 
       console.log(req.body);
-      const user = await db.User.create({
+      const user = await User.create({
         email,
         nickname,
         password: hashedPassword,

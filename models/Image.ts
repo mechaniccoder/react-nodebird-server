@@ -1,10 +1,10 @@
 import {DataTypes, Model, Sequelize} from "sequelize";
 
-export default (sequelize: Sequelize) => {
-  class Image extends Model {
-    src!: string;
-  }
+export class Image extends Model {
+  src!: string;
+}
 
+export default (sequelize: Sequelize) => {
   Image.init(
     {
       src: {
