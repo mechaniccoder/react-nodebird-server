@@ -1,5 +1,4 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
-import Post from "./Post";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 export class User extends Model {
   nickname!: string;
