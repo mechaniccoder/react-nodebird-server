@@ -1,10 +1,9 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
+export class Post extends Model {
+  content!: string;
+}
 
 export default (sequelize: Sequelize) => {
-  class Post extends Model {
-    content!: string;
-  }
-
   Post.init(
     {
       content: {
@@ -12,6 +11,6 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
       },
     },
-    {sequelize}
+    { sequelize }
   );
 };
