@@ -11,16 +11,24 @@ router.post(
     const {email, nickname, password} = req.body;
 
     try {
+      const exUser = await User.findOne({
+        where: {
+          email,
+        },
+      });
+      if (exUser) {
+        return res.status(403).json("user exist");
+      }
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      console.log(req.body);
       const user = await User.create({
         email,
         nickname,
         password: hashedPassword,
       });
 
-      res.status(200).send("ok");
+      res.status(201).send("ok");
     } catch (error) {
       res.status(401).json(error.message);
     }
