@@ -1,5 +1,5 @@
-import passport from "passport";
-import { User } from "../models/User";
+import passport from 'passport';
+import { User } from '../models/User';
 
 export default () => {
   passport.serializeUser((user: any, done) => {
@@ -13,6 +13,7 @@ export default () => {
           id,
         },
       });
+
       done(null, user);
     } catch (err) {
       done(err);

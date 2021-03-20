@@ -1,51 +1,47 @@
-import express, {NextFunction, Request, Response} from "express";
-import bcrypt from "bcrypt";
-import {User} from "../models/User";
-import passport from "passport";
-import {Post} from "../models/Post";
+import express, { NextFunction, Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import { User } from '../models/User';
+import passport from 'passport';
+import { Post } from '../models/Post';
 
 const router = express.Router();
 
-router.post(
-  "/signup",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const {email, nickname, password} = req.body;
+router.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
+  const { email, nickname, password } = req.body;
 
-    try {
-      const exUser = await User.findOne({
-        where: {
-          email,
-        },
-      });
-      if (exUser) {
-        return res.status(403).json("user exist");
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      await User.create({
+  try {
+    const exUser = await User.findOne({
+      where: {
         email,
-        nickname,
-        password: hashedPassword,
-      });
-
-      res.status(200).send("user created");
-    } catch (error) {
-      res.status(401).json(error.message);
+      },
+    });
+    if (exUser) {
+      return res.status(403).json('user exist');
     }
-  }
-);
 
-router.post("/login", (req: Request, res: Response, next: NextFunction) => {
-  passport.authenticate("local", (err, user, info) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.create({
+      email,
+      nickname,
+      password: hashedPassword,
+    });
+
+    res.status(200).json('user created');
+  } catch (error) {
+    res.status(401).json(error.message);
+  }
+});
+
+router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate('local', (err, user, info) => {
     if (err) {
-      console.log(err);
-      return next(err);
+      return res.status(401).json(err.message);
     }
 
     if (info) {
       console.log(info);
-      return res.status(401).send(info.message);
+      return res.status(401).json(info.message);
     }
 
     req.logIn(user, async (err) => {
@@ -58,17 +54,19 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
           id: user.id,
         },
         attributes: {
-          exclude: ["password"],
+          exclude: ['password'],
         },
         include: [
-          Post,
           {
-            model: User,
-            as: "Followings",
+            model: Post,
           },
           {
             model: User,
-            as: "Followers",
+            as: 'Followings',
+          },
+          {
+            model: User,
+            as: 'Followers',
           },
         ],
       });
