@@ -1,4 +1,4 @@
-import {DataTypes, Model, Sequelize} from "sequelize";
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export class Hashtag extends Model {
   tag!: string;
@@ -12,6 +12,6 @@ export default (sequelize: Sequelize) => {
         allowNull: false,
       },
     },
-    {sequelize}
+    { sequelize },
   );
 };

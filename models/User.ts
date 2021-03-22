@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from 'sequelize';
 
 export class User extends Model {
   nickname!: string;
@@ -26,7 +26,7 @@ export default (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      charset: "utf8",
-    }
+      charset: 'utf8',
+    },
   );
 };

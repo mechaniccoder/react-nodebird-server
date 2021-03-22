@@ -6,7 +6,6 @@ import { sequelize } from './models';
 import authRouter from './routes/auth';
 import cors from 'cors';
 import session from 'express-session';
-import cookieParser from 'cookie-parser';
 import local from './passport/local';
 import passportConfig from './passport';
 
