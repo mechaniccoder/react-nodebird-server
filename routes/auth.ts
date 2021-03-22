@@ -3,10 +3,11 @@ import bcrypt from 'bcrypt';
 import { User } from '../models/User';
 import passport from 'passport';
 import { Post } from '../models/Post';
+import { isLoggedIn, isNotLoggedIn } from './middlewares';
 
 const router = express.Router();
 
-router.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/signup', isNotLoggedIn, async (req: Request, res: Response) => {
   const { email, nickname, password } = req.body;
 
   try {
@@ -33,7 +34,7 @@ router.post('/signup', async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
-router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+router.post('/login', isNotLoggedIn, (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       return res.status(401).json(err.message);
@@ -74,6 +75,14 @@ router.post('/login', (req: Request, res: Response, next: NextFunction) => {
       return res.status(200).json(filterdUser);
     });
   })(req, res, next);
+});
+
+router.post('/logout', isLoggedIn, (req: Request, res: Response) => {
+  req.logOut();
+  req.session.destroy((err) => {
+    res.status(403).json(err);
+  });
+  res.send('ok');
 });
 
 export default router;
