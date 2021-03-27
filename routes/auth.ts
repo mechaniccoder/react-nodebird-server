@@ -7,6 +7,42 @@ import { isLoggedIn, isNotLoggedIn } from './middlewares';
 
 const router = express.Router();
 
+router.get('/', async (req, res) => {
+  try {
+    if (req.user) {
+      const user = await User.findOne({
+        where: {
+          id: (req.user as any).id,
+        },
+        attributes: {
+          exclude: ['password'],
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ['id'],
+          },
+          {
+            model: User,
+            as: 'Followings',
+            attributes: ['id'],
+          },
+          {
+            model: User,
+            as: 'Followers',
+            attributes: ['id'],
+          },
+        ],
+      });
+      res.status(200).json(user);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    res.status(404).send('User not found');
+  }
+});
+
 router.post('/signup', isNotLoggedIn, async (req: Request, res: Response) => {
   const { email, nickname, password } = req.body;
 
@@ -34,7 +70,7 @@ router.post('/signup', isNotLoggedIn, async (req: Request, res: Response) => {
   }
 });
 
-router.post('/login', isNotLoggedIn, (req: Request, res: Response, next: NextFunction) => {
+router.post('/login', (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
       return res.status(401).json(err.message);
