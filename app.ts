@@ -8,6 +8,7 @@ import cors from 'cors';
 import session from 'express-session';
 import local from './passport/local';
 import passportConfig from './passport';
+import logger from 'morgan';
 
 const PORT = process.env.PORT || 4000;
 
@@ -17,11 +18,14 @@ sequelize.sync().then(() => {
   console.log('mysql connected');
 });
 
-passportConfig();
-local();
+app.use(logger('dev'));
 
-app.use(cors());
-// app.use(cookieParser());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }),
+);
 app.use(
   session({
     secret: 'node-bird',
@@ -31,8 +35,13 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+passportConfig();
+local();
 
 app.use('/auth', authRouter);
 app.use('/post', postRouter);
