@@ -14,7 +14,9 @@ export default () => {
         },
       });
 
-      done(null, user);
+      if (!user) return done('user not found', null);
+
+      done(null, user.get());
     } catch (err) {
       done(err);
     }

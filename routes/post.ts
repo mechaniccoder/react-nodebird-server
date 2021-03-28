@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { Comment } from '../models/Comment';
+import { Image } from '../models/Image';
 import { Post } from '../models/Post';
 import { User } from '../models/User';
 import { isLoggedIn } from './middlewares';
@@ -43,6 +44,12 @@ router.get('/', async (req: Request, res: Response) => {
             exclude: ['password'],
           },
         },
+        {
+          model: Image,
+        },
+        {
+          model: Comment,
+        },
       ],
     });
     res.status(200).json(posts);
@@ -53,11 +60,10 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
-  console.log(req.user);
   try {
     const { content } = req.body;
-    const id = req.user;
-    const postId = req.params;
+    const user = req.user;
+    const { postId } = req.params;
 
     const exPost = await Post.findOne({
       where: {
@@ -68,11 +74,20 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
       return res.status(403).send('Post not found');
     }
 
-    const newComment = await Comment.create({
-      content,
-      PostId: postId,
-      UserId: id,
-    });
+    const newComment = await Comment.create(
+      {
+        content,
+        PostId: postId,
+        UserId: (user as any).id,
+      },
+      {
+        include: [
+          {
+            model: User,
+          },
+        ],
+      },
+    );
     res.status(201).json(newComment);
   } catch (error) {
     next(error);
