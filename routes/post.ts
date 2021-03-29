@@ -8,14 +8,25 @@ import { isLoggedIn } from './middlewares';
 const router = express.Router();
 
 router.post('/', isLoggedIn, async (req: Request, res: Response) => {
-  console.log('post', req.session);
   try {
     const { content, id } = req.body;
 
-    const post = await Post.create({
-      content: content,
-      UserId: id,
-    });
+    const post = await Post.create(
+      {
+        content: content,
+        UserId: id,
+      },
+      {
+        include: [
+          {
+            model: Comment,
+          },
+          {
+            model: Image,
+          },
+        ],
+      },
+    );
     const user = await User.findOne({
       where: {
         id,
@@ -49,6 +60,14 @@ router.get('/', async (req: Request, res: Response) => {
         },
         {
           model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: {
+                exclude: ['password'],
+              },
+            },
+          ],
         },
       ],
     });
@@ -74,21 +93,27 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
       return res.status(403).send('Post not found');
     }
 
-    const newComment = await Comment.create(
-      {
-        content,
-        PostId: postId,
-        UserId: (user as any).id,
+    const newComment = await Comment.create({
+      content,
+      PostId: Number(postId),
+      UserId: (user as any).id,
+    });
+
+    const addedComment = await Comment.findOne({
+      where: {
+        id: (newComment as any).id,
       },
-      {
-        include: [
-          {
-            model: User,
+      order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: {
+            exclude: ['password'],
           },
-        ],
-      },
-    );
-    res.status(201).json(newComment);
+        },
+      ],
+    });
+    res.status(201).json(addedComment);
   } catch (error) {
     next(error);
   }
