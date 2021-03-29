@@ -119,4 +119,31 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
+  try {
+    const PostId = Number(req.params.postId);
+    const exPost = await Post.findOne({
+      where: {
+        id: PostId,
+      },
+    });
+
+    if (!exPost) {
+      res.status(403).send('존재하지 않는 게시물입니다.');
+    }
+
+    await (exPost as any).addLikeUsers((req.user as any).id);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/:postId/like', async (req, res, next) => {
+  try {
+    res.json('unlike');
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default router;
