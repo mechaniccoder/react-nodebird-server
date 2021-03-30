@@ -69,6 +69,11 @@ router.get('/', async (req: Request, res: Response) => {
             },
           ],
         },
+        {
+          model: User,
+          as: 'LikeUsers',
+          attributes: ['id'],
+        },
       ],
     });
     res.status(200).json(posts);
@@ -129,18 +134,31 @@ router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
     });
 
     if (!exPost) {
-      res.status(403).send('존재하지 않는 게시물입니다.');
+      return res.status(403).send('존재하지 않는 게시물입니다.');
     }
 
-    await (exPost as any).addLikeUsers((req.user as any).id);
+    const result = await (exPost as any).addLikeUsers((req.user as any).id);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
 });
 
-router.delete('/:postId/like', async (req, res, next) => {
+router.delete('/:postId/unlike', isLoggedIn, async (req, res, next) => {
   try {
-    res.json('unlike');
+    const PostId = Number(req.params.postId);
+    const exPost = await Post.findOne({
+      where: {
+        id: PostId,
+      },
+    });
+
+    if (!exPost) {
+      return res.status(403).send('존재하지 않는 게시물입니다.');
+    }
+
+    await (exPost as any).removeLikeUsers((req.user as any).id);
+    res.status(201).json({ PostId, UserId: (req.user as any).id });
   } catch (error) {
     next(error);
   }

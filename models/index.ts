@@ -24,8 +24,6 @@ createHashtag(sequelize);
 
 export const { User, Post, Comment, Hashtag, Image } = sequelize.models;
 
-// models accociation
-
 User.hasMany(Post);
 User.hasMany(Comment);
 User.belongsToMany(Post, { through: 'Like', as: 'LikePosts' });
