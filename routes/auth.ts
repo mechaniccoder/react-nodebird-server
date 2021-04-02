@@ -121,4 +121,21 @@ router.post('/logout', isLoggedIn, (req: Request, res: Response) => {
   res.send('ok');
 });
 
+router.patch('/nickname', async (req, res, next) => {
+  const { nickname } = req.body;
+  try {
+    await User.update(
+      { nickname },
+      {
+        where: {
+          id: (req.user! as any).id,
+        },
+      },
+    );
+    res.status(201).json({ nickname: req.body.nickname });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;
