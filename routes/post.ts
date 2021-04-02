@@ -83,6 +83,21 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+  try {
+    const PostId = Number(req.params.postId);
+    await Post.destroy({
+      where: {
+        id: PostId,
+      },
+    });
+
+    res.json({ PostId });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   try {
     const { content } = req.body;
